@@ -1,0 +1,105 @@
+module.exports = expandVertexData
+
+/**
+ * Decompress a set of position, normal and uv indices and their
+ * accompanying data.
+ * This solves for situations when you are re-using the same
+ * vertex positions but with a different normal or uv index.
+ * You can't have multiple indices (ELEMENT_ARRAY_BUFFER) in
+ * WebGL, so this module the data expands your data so that it
+ * can use one ELEMENT_ARRAY_BUFFER for your vertex position indices
+ *
+ * TODO: Look into whether or not it's worth checking when deduping indices
+ * whether or not all of the other indices would have been the same.
+ * Seems like the potential savings would be negligible if any.. but look into it
+ * Yeah.... a triangle saved is a triangle earned...
+ */
+function expandVertexData (compressedVertexData) {
+  // Create the arrays that will hold our expanded vertex data
+  var expandedPositionIndices = []
+  var expandedPositions = []
+  var expandedNormals = []
+  var expandedUVs = []
+  var expandedJointInfluences = []
+  var expandedJointWeights = []
+
+  // Track indices that we've already encountered so that we don't use them twice
+  var encounteredPositionIndices = {}
+  // Track the largest vertex position index that we encounter. When expanding
+  // the data we will increment all vertex position indices that were used
+  // more than once.
+  // We will insert the proper data into the corresponding array indices
+  // for our normal and uv arrays
+  var largestPositionIndex = 0
+  // Track which counters we've already encountered so that we can loop through them later
+  var unprocessedVertexNums = {}
+
+  compressedVertexData.vertexPositionIndices.forEach(function (positionIndex, vertexNum) {
+    // Keep track of the largest vertex index that we encounter
+    largestPositionIndex = Math.max(largestPositionIndex, positionIndex)
+    // If this is our first time seeing this index we build all of our
+    // data arrays as usual.
+    if (!encounteredPositionIndices[positionIndex]) {
+      // Mark this vertex index as encountered. We'll deal with encountered indices later
+      encounteredPositionIndices[positionIndex] = true
+      setVertexData(positionIndex, vertexNum)
+    } else {
+      unprocessedVertexNums[vertexNum] = positionIndex
+    }
+  })
+
+  // Go over all duplicate vertex indices and change them to a new index number.
+  // Then duplicate their relevant data to that same index number
+  Object.keys(unprocessedVertexNums).forEach(function (vertexNum) {
+    var positionIndex = ++largestPositionIndex
+    expandedPositionIndices[vertexNum] = positionIndex
+
+    setVertexData(positionIndex, vertexNum)
+  })
+
+  /**
+   * Helper function to set the vertex data at a specified index.
+   * This is what builds the arrays that we return to the module user for consumption
+   */
+  function setVertexData (positionIndex, vertexNum) {
+    expandedPositionIndices[vertexNum] = positionIndex
+    var jointsAndWeights
+    if (compressedVertexData.vertexJointWeights) {
+      jointsAndWeights = compressedVertexData.vertexJointWeights[positionIndex]
+    }
+
+    for (var i = 0; i < 4; i++) {
+      if (jointsAndWeights) {
+        // 4 bone (joint) influences and weights per vertex
+        var jointIndex = Object.keys(compressedVertexData.jointsAndWeights)[i]
+        // TODO: Should zero be -1? It will have a zero weight regardless, but that lets us distinguish between empty bone slots and zero index bone slots
+        // TODO: If there are more than 4 bones take the four that have the strongest weight
+        expandedJointInfluences[positionIndex * 4 + i] = Number(jointIndex) || 0
+        expandedJointWeights[positionIndex * 4 + i] = jointsAndWeights[jointIndex] || 0
+      }
+
+      // 3 normals and position coordinates per vertex
+      if (i < 3) {
+        expandedPositions[positionIndex * 3 + i] = compressedVertexData.vertexPositions[positionIndex * 3 + i]
+        if (compressedVertexData.vertexNormals) {
+          expandedNormals[positionIndex * 3 + i] = compressedVertexData.vertexNormals[compressedVertexData.vertexNormalIndices[vertexNum] * 3 + i]
+        }
+      }
+      // 2 UV coordinates per vertex
+      if (i < 2) {
+        if (compressedVertexData.vertexUVs) {
+          expandedUVs[positionIndex * 2 + 1] = compressedVertexData.vertexUVs[compressedVertexData.vertexUVIndices[vertexNum] * 2 + i]
+        }
+      }
+    }
+  }
+
+  return {
+    jointInfluences: expandedJointInfluences,
+    jointWeights: expandedJointWeights,
+    normals: expandedNormals,
+    positionIndices: expandedPositionIndices,
+    positions: expandedPositions,
+    uvs: expandedUVs
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "name": "expand-vertex-data",
+  "version": "0.0.1",
+  "description": "Expand vertex, normal and uv indices into vertex normal and uv data that is ready for your array buffers",
+  "main": "src/expand-vertex-data.js",
+  "scripts": {
+    "test": "standard && tape test/**/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chinedufn/expand-vertex-data.git"
+  },
+  "keywords": [
+    "vertex",
+    "index",
+    "indices",
+    "normal",
+    "uv",
+    "webgl",
+    "expand",
+    "data",
+    "element",
+    "array",
+    "buffer",
+    "face"
+  ],
+  "author": "Chinedu Francis Nwafili <frankie.nwafili@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/chinedufn/expand-vertex-data/issues"
+  },
+  "homepage": "https://github.com/chinedufn/expand-vertex-data#readme",
+  "devDependencies": {
+    "standard": "^8.6.0",
+    "tape": "^4.6.3"
+  }
+}
