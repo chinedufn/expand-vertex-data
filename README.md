@@ -54,32 +54,51 @@ you can pass their returned data right in.
 
 If you're using your own parser, you're still all good. Just rename your parsed properties accordingly before passing them into `expand-vertex-data`
 
-#### compressedVertexData.
+#### compressedVertexData.vertexPositionIndices
 
 *Required*
 
-Type: `string`
+Type: `Array`
 
-A collada `.dae` file that has been parsed into JSON.
+#### compressedVertexData.vertexPositions
 
-Usually you'd use [collada-dae-parser](https://github.com/collada-dae-parser) to parser the `.dae` file pre-runtime.
-But any parser that outputs the same format will do.
+*Required*
 
-#### loadOptions
+type: `Array`
+
+#### compressedVertexData.vertexNormalIndices
 
 *Optional*
 
-type: `object`
+type: `Array`
 
-`expand-vertex-data` comes with default options, but you'll likely want to override some.
+#### compressedVertexData.vertexNormals
 
-```js
-var myOptions = {
-  textureImage: document.getElementById('some-already-loaded-image') || new Uint8Array([255, 0, 0, 255])
-}
-```
+*Optional*
+
+type: `Array`
+
+#### compressedVertexData.vertexUVIndices
+
+*Optional*
+
+type: `Array`
+
+#### compressedVertexData.vertexUVs
+
+*Optional*
+
+type: `Array`
+
+#### compressedVertexData.vertexJointsAndWeights
+
+*Optional*
+
+type: `Array`
 
 ### Returned: expandedOutput
+
+type: `Object`
 
 In the `Array` lengths described below, `n` is the number of vertexPositionIndices that were **returned** after expansion
 
