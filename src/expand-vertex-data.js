@@ -71,7 +71,7 @@ function expandVertexData (compressedVertexData) {
     for (var i = 0; i < 4; i++) {
       if (jointsAndWeights) {
         // 4 bone (joint) influences and weights per vertex
-        var jointIndex = Object.keys(compressedVertexData.jointsAndWeights)[i]
+        var jointIndex = Object.keys(jointsAndWeights)[i]
         // TODO: Should zero be -1? It will have a zero weight regardless, but that lets us distinguish between empty bone slots and zero index bone slots
         // TODO: If there are more than 4 bones take the four that have the strongest weight
         expandedJointInfluences[positionIndex * 4 + i] = Number(jointIndex) || 0
@@ -80,7 +80,7 @@ function expandVertexData (compressedVertexData) {
 
       // 3 normals and position coordinates per vertex
       if (i < 3) {
-        expandedPositions[positionIndex * 3 + i] = compressedVertexData.vertexPositions[positionIndex * 3 + i]
+        expandedPositions[positionIndex * 3 + i] = compressedVertexData.vertexPositions[vertexNum * 3 + i]
         if (compressedVertexData.vertexNormals) {
           expandedNormals[positionIndex * 3 + i] = compressedVertexData.vertexNormals[compressedVertexData.vertexNormalIndices[vertexNum] * 3 + i]
         }
