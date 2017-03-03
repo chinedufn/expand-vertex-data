@@ -44,7 +44,7 @@ function expandVertexData (compressedVertexData) {
       encounteredPositionIndices[positionIndex] = true
       setVertexData(positionIndex, vertexNum)
     } else {
-      unprocessedVertexNums[vertexNum] = positionIndex
+      unprocessedVertexNums[vertexNum] = true
     }
   })
 
@@ -52,7 +52,6 @@ function expandVertexData (compressedVertexData) {
   // Then duplicate their relevant data to that same index number
   Object.keys(unprocessedVertexNums).forEach(function (vertexNum) {
     var positionIndex = ++largestPositionIndex
-    expandedPositionIndices[vertexNum] = positionIndex
 
     setVertexData(positionIndex, vertexNum)
   })
@@ -62,10 +61,13 @@ function expandVertexData (compressedVertexData) {
    * This is what builds the arrays that we return to the module user for consumption
    */
   function setVertexData (positionIndex, vertexNum) {
+    // The position index before we incremented it to dedupe it
+    var originalPositionIndex = compressedVertexData.vertexPositionIndices[vertexNum]
+
     expandedPositionIndices[vertexNum] = positionIndex
     var jointsAndWeights
     if (compressedVertexData.vertexJointWeights) {
-      jointsAndWeights = compressedVertexData.vertexJointWeights[positionIndex]
+      jointsAndWeights = compressedVertexData.vertexJointWeights[originalPositionIndex]
     }
 
     for (var i = 0; i < 4; i++) {
@@ -80,7 +82,7 @@ function expandVertexData (compressedVertexData) {
 
       // 3 normals and position coordinates per vertex
       if (i < 3) {
-        expandedPositions[positionIndex * 3 + i] = compressedVertexData.vertexPositions[vertexNum * 3 + i]
+        expandedPositions[positionIndex * 3 + i] = compressedVertexData.vertexPositions[originalPositionIndex * 3 + i]
         if (compressedVertexData.vertexNormals) {
           expandedNormals[positionIndex * 3 + i] = compressedVertexData.vertexNormals[compressedVertexData.vertexNormalIndices[vertexNum] * 3 + i]
         }
@@ -88,7 +90,7 @@ function expandVertexData (compressedVertexData) {
       // 2 UV coordinates per vertex
       if (i < 2) {
         if (compressedVertexData.vertexUVs) {
-          expandedUVs[positionIndex * 2 + 1] = compressedVertexData.vertexUVs[compressedVertexData.vertexUVIndices[vertexNum] * 2 + i]
+          expandedUVs[positionIndex * 2 + i] = compressedVertexData.vertexUVs[compressedVertexData.vertexUVIndices[vertexNum] * 2 + i]
         }
       }
     }
