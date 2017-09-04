@@ -14,7 +14,49 @@ module.exports = expandVertexData
  * Seems like the potential savings would be negligible if any.. but look into it
  * Yeah.... a triangle saved is a triangle earned...
  */
-function expandVertexData (compressedVertexData) {
+function expandVertexData (compressedVertexData, opts) {
+  opts = opts || {}
+  // Handles wavefront .obj files that can have lines with
+  // 3 vertices (triangle) or 4 (face).
+  // Specifically designed to work with the JSON that `wavefront-obj-parser` provides.
+  // If we find a `-1` as the fourth number it means was a triangle line.
+  // Otherwise it is a face line that we'll expand into two triangles
+  // `1 2 3 -1` would be a set of triangle indices
+  // `1 2 3 4` would be a face that we'd expand into `1 2 3 1 3 4`
+  if (opts.facesToTriangles) {
+    var decodedVertexPositionIndices = []
+    var decodedVertexUVIndices = []
+    var decodedVertexNormalIndices = []
+
+    for (var i = 0; i < compressedVertexData.vertexUVIndices.length / 4; i++) {
+      decodedVertexPositionIndices.push(compressedVertexData.vertexUVIndices[i * 4])
+      decodedVertexPositionIndices.push(compressedVertexData.vertexUVIndices[i * 4 + 1])
+      decodedVertexPositionIndices.push(compressedVertexData.vertexUVIndices[i * 4 + 2])
+      decodedVertexUVIndices.push(compressedVertexData.vertexUVIndices[i * 4])
+      decodedVertexUVIndices.push(compressedVertexData.vertexUVIndices[i * 4 + 1])
+      decodedVertexUVIndices.push(compressedVertexData.vertexUVIndices[i * 4 + 2])
+      decodedVertexNormalIndices.push(compressedVertexData.vertexNormalIndices[i * 4])
+      decodedVertexNormalIndices.push(compressedVertexData.vertexNormalIndices[i * 4 + 1])
+      decodedVertexNormalIndices.push(compressedVertexData.vertexNormalIndices[i * 4 + 2])
+      // If this is a face with 4 vertices we push a second triangle
+      if (decodedVertexPositionIndices[i * 4 + 3] !== -1) {
+        decodedVertexPositionIndices.push(compressedVertexData.vertexUVIndices[i * 4])
+        decodedVertexPositionIndices.push(compressedVertexData.vertexUVIndices[i * 4 + 2])
+        decodedVertexPositionIndices.push(compressedVertexData.vertexUVIndices[i * 4 + 3])
+        decodedVertexUVIndices.push(compressedVertexData.vertexUVIndices[i * 4])
+        decodedVertexUVIndices.push(compressedVertexData.vertexUVIndices[i * 4 + 2])
+        decodedVertexUVIndices.push(compressedVertexData.vertexUVIndices[i * 4 + 3])
+        decodedVertexNormalIndices.push(compressedVertexData.vertexNormalIndices[i * 4])
+        decodedVertexNormalIndices.push(compressedVertexData.vertexNormalIndices[i * 4 + 2])
+        decodedVertexNormalIndices.push(compressedVertexData.vertexNormalIndices[i * 4 + 3])
+      }
+    }
+
+    compressedVertexData.vertexPositionIndices = decodedVertexPositionIndices
+    compressedVertexData.vertexNormalIndices = decodedVertexNormalIndices
+    compressedVertexData.vertexUVIndices = decodedVertexUVIndices
+  }
+
   // Create the arrays that will hold our expanded vertex data
   var expandedPositionIndices = []
   var expandedPositions = []

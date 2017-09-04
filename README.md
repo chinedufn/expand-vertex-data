@@ -47,7 +47,7 @@ See something broken, confusing or ripe for improvement? Feel free to open an is
 
 ## API
 
-### `expandVertexData(compressedVertexData)` -> `expandedOutput`
+### `expandVertexData(compressedVertexData, opts)` -> `expandedOutput`
 
 An object containing your model's vertex data. If you're using `collada-dae-parser` or `wavefront-obj-parser`
 you can pass their returned data right in.
@@ -95,6 +95,15 @@ type: `Array`
 *Optional*
 
 type: `Array`
+
+
+#### opts.facesToTriangles
+
+*Optional*
+
+type: `Boolean`
+
+Use this when working with JSON that came from `wavefront-obj-parser`
 
 ### Returned: expandedOutput
 
