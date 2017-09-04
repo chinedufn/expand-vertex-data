@@ -1,6 +1,6 @@
 {
   "name": "expand-vertex-data",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Expand vertex, normal and uv indices into vertex normal and uv data that is ready for your array buffers",
   "main": "src/expand-vertex-data.js",
   "scripts": {
