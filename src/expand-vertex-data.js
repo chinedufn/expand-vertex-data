@@ -39,7 +39,7 @@ function expandVertexData (compressedVertexData, opts) {
       decodedVertexNormalIndices.push(compressedVertexData.vertexNormalIndices[i * 4 + 1])
       decodedVertexNormalIndices.push(compressedVertexData.vertexNormalIndices[i * 4 + 2])
       // If this is a face with 4 vertices we push a second triangle
-      if (decodedVertexPositionIndices[i * 4 + 3] !== -1) {
+      if (compressedVertexData.vertexPositionIndices[i * 4 + 3] !== -1) {
         decodedVertexPositionIndices.push(compressedVertexData.vertexPositionIndices[i * 4])
         decodedVertexPositionIndices.push(compressedVertexData.vertexPositionIndices[i * 4 + 2])
         decodedVertexPositionIndices.push(compressedVertexData.vertexPositionIndices[i * 4 + 3])
