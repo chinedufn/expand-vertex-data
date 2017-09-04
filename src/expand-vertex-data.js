@@ -28,10 +28,10 @@ function expandVertexData (compressedVertexData, opts) {
     var decodedVertexUVIndices = []
     var decodedVertexNormalIndices = []
 
-    for (var i = 0; i < compressedVertexData.vertexUVIndices.length / 4; i++) {
-      decodedVertexPositionIndices.push(compressedVertexData.vertexUVIndices[i * 4])
-      decodedVertexPositionIndices.push(compressedVertexData.vertexUVIndices[i * 4 + 1])
-      decodedVertexPositionIndices.push(compressedVertexData.vertexUVIndices[i * 4 + 2])
+    for (var i = 0; i < compressedVertexData.vertexPositionIndices.length / 4; i++) {
+      decodedVertexPositionIndices.push(compressedVertexData.vertexPositionIndices[i * 4])
+      decodedVertexPositionIndices.push(compressedVertexData.vertexPositionIndices[i * 4 + 1])
+      decodedVertexPositionIndices.push(compressedVertexData.vertexPositionIndices[i * 4 + 2])
       decodedVertexUVIndices.push(compressedVertexData.vertexUVIndices[i * 4])
       decodedVertexUVIndices.push(compressedVertexData.vertexUVIndices[i * 4 + 1])
       decodedVertexUVIndices.push(compressedVertexData.vertexUVIndices[i * 4 + 2])
@@ -40,9 +40,9 @@ function expandVertexData (compressedVertexData, opts) {
       decodedVertexNormalIndices.push(compressedVertexData.vertexNormalIndices[i * 4 + 2])
       // If this is a face with 4 vertices we push a second triangle
       if (decodedVertexPositionIndices[i * 4 + 3] !== -1) {
-        decodedVertexPositionIndices.push(compressedVertexData.vertexUVIndices[i * 4])
-        decodedVertexPositionIndices.push(compressedVertexData.vertexUVIndices[i * 4 + 2])
-        decodedVertexPositionIndices.push(compressedVertexData.vertexUVIndices[i * 4 + 3])
+        decodedVertexPositionIndices.push(compressedVertexData.vertexPositionIndices[i * 4])
+        decodedVertexPositionIndices.push(compressedVertexData.vertexPositionIndices[i * 4 + 2])
+        decodedVertexPositionIndices.push(compressedVertexData.vertexPositionIndices[i * 4 + 3])
         decodedVertexUVIndices.push(compressedVertexData.vertexUVIndices[i * 4])
         decodedVertexUVIndices.push(compressedVertexData.vertexUVIndices[i * 4 + 2])
         decodedVertexUVIndices.push(compressedVertexData.vertexUVIndices[i * 4 + 3])
