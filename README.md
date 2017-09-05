@@ -40,7 +40,7 @@ var parsedWavefront = require('wavefront-obj-parser')(wavefrontFile)
 
 // Pass this data into your ELEMENT_ARRAY_BUFFER and ARRAY_BUFFERS
 var expandedCollada = expandVertexData(parsedCollada)
-var expandedWavefront = expandVertexData(parsedWavefront)
+var expandedWavefront = expandVertexData(parsedWavefront, {facesToTriangles: true})
 ```
 
 See something broken, confusing or ripe for improvement? Feel free to open an issue or PR!
